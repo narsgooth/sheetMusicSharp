@@ -59,5 +59,3 @@ function getNote(pitch,startT,endT) {
 	y_value = reMap(pitch)*lineSpacing/2+lineSpacing*5 + offset;
 	return `<line x1="${startT*fT}" y1="${y_value}" x2="${(startT+endT)*fT-1}" y2="${y_value}" stroke="${color}" stroke-width="${lineSpacing/2}"/>`;
 }
-
-console.log('a');
