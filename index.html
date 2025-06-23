@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>sheetMusic#</title>
+		<link rel="icon" href="favicon.png" type="image/png">
+		<style>
+		</style>
+	</head>
+	<body>
+		<input type="file" id="midiInput" accept=".mid,.midi" />
+		<svg id="mysvg" width="10000" height="300" style="border:1px solid LightGrey;"></svg>
+		<script src="js/render.js"></script>
+		<script type="module">
+import { Midi } from "https://cdn.skypack.dev/@tonejs/midi";
+
+document.getElementById("midiInput").addEventListener("change", async (e) => {
+	const file = e.target.files[0];
+	const arrayBuffer = await file.arrayBuffer();
+
+	const midi = new Midi(arrayBuffer);
+
+	let svgNotes= "";
+	midi.tracks.forEach((track, i) => {
+		console.log(`Track ${i}: ${track.name}`);
+		track.notes.forEach(note => {
+			console.log(`Note: ${note.name},${note.midi}, Time: ${note.time}, Duration: ${note.duration}`);
+			svgNotes += getNote(note.midi,note.time,note.duration);
+		});
+		svg.innerHTML +=svgNotes;
+	});
+
+});
+	const svg = document.getElementById("mysvg");
+	svg.innerHTML = getMeasure();
+
+		
+		</script>
+		<br>
+
+
+	</body>
+</html>
