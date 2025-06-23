@@ -1,22 +1,29 @@
 lineSpacing = 10;
 offset = 100;
-measureSpacing=120;
 
+	fT = 40.0;
 function getLine(x1, y1, x2, y2,color="Black") {
   return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" />`;
 }
 
-function getMeasure() {
+function getMeasure(measureSpacing,numerator, denominator) {
 	measure = "";
 	for(var i = 0 ; i< 11; i ++)
 		if(i!=5)
 			measure+=getLine(0, i*lineSpacing+offset, 10000, i*lineSpacing+offset)
 	for(var i = 0 ; i< 100; i ++)
 	{
-		//measure+=getLine(i*measureSpacing, offset, i*measureSpacing, offset+lineSpacing*10)		
-		//measure+=getLine(i*measureSpacing+measureSpacing/4, offset, i*measureSpacing+measureSpacing/4, offset+lineSpacing*10,"LightGrey")
-		//measure+=getLine(i*measureSpacing+measureSpacing/2, offset, i*measureSpacing+measureSpacing/2, offset+lineSpacing*10,"LightGrey")
-		//measure+=getLine(i*measureSpacing+measureSpacing*3/4, offset, i*measureSpacing+measureSpacing*3/4, offset+lineSpacing*10,"LightGrey")
+		for(var j  = 0 ; j<numerator;j++)
+		{
+			let color = "LightGrey";
+			if(j==0)
+			{
+				color = "Black";
+				console.log(color);
+			}
+			x_var = i*measureSpacing*fT+j*measureSpacing/numerator*fT
+			measure+=getLine(x_var, offset, x_var, offset+lineSpacing*10,color);
+		}
 	}
 	return measure;
 }
@@ -41,7 +48,6 @@ function reMap(pitch) {
 
 
 function getNote(pitch,startT,endT) {
-	fT = 40.0;
 	var colors = ['Red',
 				'Maroon',
 				'Orange',

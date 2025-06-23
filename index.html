@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>sheetMusic# v0.0.0</title>
+		<title>sheetMusic# v0.1.0</title>
 		<link rel="icon" href="favicon.png" type="image/png">
 		<style>
 		</style>
@@ -19,21 +19,62 @@ document.getElementById("midiInput").addEventListener("change", async (e) => {
 	const arrayBuffer = await file.arrayBuffer();
 
 	const midi = new Midi(arrayBuffer);
+	
+	// Access time signature
+	//const timeSignatures = midi.header.timeSignatures;
+	//console.log(timeSignatures[0].timeSignature);
+	////////////////////////////////////////////////////////
+	// Get time signature(s)
+	midi.header.timeSignatures.forEach(ts => {
+	  console.log(`Time Signature: ${ts.timeSignature[0]}/${ts.timeSignature[1]}`);
+	  console.log(`At Tick: ${ts.ticks}`);
+	});
 
+	// Get PPQ (Pulses Per Quarter note), useful for calculating time
+	console.log("PPQ:", midi.header.ppq);
+
+	// Get tempo(s)
+	midi.header.tempos.forEach(tempo => {
+	  console.log(`Tempo: ${tempo.bpm} BPM at Tick ${tempo.ticks}`);
+	});
+	/////////////////////////////////////////////////////////////////
+	//let numTicks = (60*midi.header.tempos[0].bpm)/midi.header.ppq;
+	//console.log("a__"+midi.header.tempos[0].bpm+"__"+midi.header.ppq);
+	//beatTicks * beatsPerMeasure
+	
+	const [{ timeSignature: [numerator, denominator] }] = midi.header.timeSignatures;
+	// 1. How many beats in a measure?
+	const beatsPerMeasure = numerator;
+
+	// 2. Each beat length in ticks depends on denominator
+	//    e.g., for denominator 4 (quarter note), 1 beat = ppq
+	const beatTicks = midi.header.ppq * (4 / denominator);
+
+	// 3. One measure = beats × ticks
+	const measureTicks = beatTicks * beatsPerMeasure;
+
+	// 4. Now, to convert ticks to seconds:
+	const secondsPerBeat = 60 / midi.header.tempos[0].bpm;
+	const secondsPerTick = secondsPerBeat / midi.header.ppq;
+	const measureSeconds = measureTicks * secondsPerTick;
+	console.log(measureSeconds);
+	// 5. Final time the measure ends = start time + measureSeconds
+	svg.innerHTML +=getMeasure(measureSeconds,numerator,denominator);
+	
+	//svg.innerHTML = getMeasure(numTicks);
 	let svgNotes= "";
 	midi.tracks.forEach((track, i) => {
 		console.log(`Track ${i}: ${track.name}`);
 		track.notes.forEach(note => {
-			console.log(`Note: ${note.name},${note.midi}, Time: ${note.time}, Duration: ${note.duration}`);
+			//console.log(`Note: ${note.name},${note.midi}, Time: ${note.time}, Duration: ${note.duration}`);
 			svgNotes += getNote(note.midi,note.time,note.duration);
 		});
 		svg.innerHTML +=svgNotes;
 	});
-
+	
 });
+	
 	const svg = document.getElementById("mysvg");
-	svg.innerHTML = getMeasure();
-
 		
 		</script>
 		<br>
