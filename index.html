@@ -2,18 +2,21 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>sheetMusic# v0.1.0</title>
+		<title>sheetMusic# v0.2.0</title>
 		<link rel="icon" href="favicon.png" type="image/png">
 		<style>
 		</style>
 	</head>
 	<body>
 		<input type="file" id="midiInput" accept=".mid,.midi" />
-		<svg id="mysvg" width="10000" height="300" style="border:1px solid LightGrey;"></svg>
+		
+		<svg id="mysvg" width="20000" height="900" style="border:1px solid LightGrey;"></svg>
 		<script src="js/render.js"></script>
 		<script type="module">
 import { Midi } from "https://cdn.skypack.dev/@tonejs/midi";
 
+var scaleT = 1;
+var defaultScale = .4;
 document.getElementById("midiInput").addEventListener("change", async (e) => {
 	const file = e.target.files[0];
 	const arrayBuffer = await file.arrayBuffer();
@@ -59,7 +62,7 @@ document.getElementById("midiInput").addEventListener("change", async (e) => {
 	const measureSeconds = measureTicks * secondsPerTick;
 	console.log(measureSeconds);
 	// 5. Final time the measure ends = start time + measureSeconds
-	svg.innerHTML +=getMeasure(measureSeconds,numerator,denominator);
+	svg.innerHTML +=getMeasure(midi.header.ppq,numerator,denominator);
 	
 	//svg.innerHTML = getMeasure(numTicks);
 	let svgNotes= "";
@@ -67,7 +70,7 @@ document.getElementById("midiInput").addEventListener("change", async (e) => {
 		console.log(`Track ${i}: ${track.name}`);
 		track.notes.forEach(note => {
 			//console.log(`Note: ${note.name},${note.midi}, Time: ${note.time}, Duration: ${note.duration}`);
-			svgNotes += getNote(note.midi,note.time,note.duration);
+			svgNotes += getNote(note.midi,note.ticks,note.durationTicks );
 		});
 		svg.innerHTML +=svgNotes;
 	});

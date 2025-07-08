@@ -1,13 +1,15 @@
 lineSpacing = 10;
 offset = 100;
 
-	fT = 40.0;
+fT = .2;
 function getLine(x1, y1, x2, y2,color="Black") {
   return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" />`;
 }
 
-function getMeasure(measureSpacing,numerator, denominator) {
+function getMeasure(ppq,numerator, denominator) {
 	measure = "";
+	
+	mT = ppq*numerator;
 	for(var i = 0 ; i< 11; i ++)
 		if(i!=5)
 			measure+=getLine(0, i*lineSpacing+offset, 10000, i*lineSpacing+offset)
@@ -21,7 +23,7 @@ function getMeasure(measureSpacing,numerator, denominator) {
 				color = "Black";
 				console.log(color);
 			}
-			x_var = i*measureSpacing*fT+j*measureSpacing/numerator*fT
+			x_var = i*mT*fT+j/numerator*fT*mT
 			measure+=getLine(x_var, offset, x_var, offset+lineSpacing*10,color);
 		}
 	}
@@ -47,7 +49,7 @@ function reMap(pitch) {
 }
 
 
-function getNote(pitch,startT,endT) {
+function getNote(pitch,startP,endP) {
 	var colors = ['Red',
 				'Maroon',
 				'Orange',
@@ -63,5 +65,5 @@ function getNote(pitch,startT,endT) {
 			];
 	color = colors[pitch%12];
 	y_value = reMap(pitch)*lineSpacing/2+lineSpacing*5 + offset;
-	return `<line x1="${startT*fT}" y1="${y_value}" x2="${(startT+endT)*fT-1}" y2="${y_value}" stroke="${color}" stroke-width="${lineSpacing/2}"/>`;
+	return `<line x1="${startP*fT}" y1="${y_value}" x2="${(startP+endP)*fT-1}" y2="${y_value}" stroke="${color}" stroke-width="${lineSpacing/2}"/>`;
 }
